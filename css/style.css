@@ -903,11 +903,11 @@ section {
         position: fixed;
         top: 80px;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background: var(--white);
+        width: 100%;
+        height: calc(100vh - 80px);
+        background-color: #ffffff;
+        z-index: 999;
         flex-direction: column;
-        justify-content: flex-start;
         padding: 40px 20px;
         gap: 0;
         transform: translateX(-100%);
