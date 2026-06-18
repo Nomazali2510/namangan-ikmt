@@ -814,7 +814,7 @@ section {
 
 .form-group label {
     font-weight: 500;
-    color: var(--gray-700);
+    color: var(--gray-800);
 }
 
 .form-group input,
@@ -825,6 +825,7 @@ section {
     border-radius: var(--radius);
     transition: var(--transition);
     background: var(--bg-card);
+    color: var(--gray-800);
 }
 
 .form-group input:focus,
