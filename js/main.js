@@ -1,14 +1,50 @@
 // Main JavaScript for NIKMT Landing Page
 
+// ==========================================
+// Telegram Bot Configuration (Optional)
+// To enable actual Telegram form submission,
+// enter your Telegram Bot Token and Chat ID below.
+// ==========================================
+const TELEGRAM_CONFIG = {
+    botToken: "8876168940:AAG3RMj-0a3fLF23KwOzi3aQK44cs5lkCu4", // e.g. "123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ"
+    chatId: "8794231742"    // e.g. "-100123456789" or "123456789"
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all components
+    initTheme();
     initHeader();
     initMobileMenu();
     initLangSwitcher();
     initSmoothScroll();
     initScrollAnimations();
     initContactForm();
+    initStatAnimation();
 });
+
+// ===========================
+// Theme (Dark / Light Mode)
+// ===========================
+function initTheme() {
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    if (!themeToggleBtn) return;
+
+    // Determine user preference
+    const savedTheme = localStorage.getItem('nikmt_theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.body.classList.add('dark-theme');
+    } else {
+        document.body.classList.remove('dark-theme');
+    }
+
+    themeToggleBtn.addEventListener('click', function() {
+        document.body.classList.toggle('dark-theme');
+        const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+        localStorage.setItem('nikmt_theme', currentTheme);
+    });
+}
 
 // ===========================
 // Header Scroll Effect
@@ -162,19 +198,56 @@ function initContactForm() {
             return;
         }
 
-        // Simulate form submission
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
         submitBtn.disabled = true;
         submitBtn.textContent = '...';
 
-        // Simulate API call
-        setTimeout(() => {
-            showNotification(getFormMessage('success'), 'success');
-            form.reset();
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
-        }, 1500);
+        if (TELEGRAM_CONFIG.botToken && TELEGRAM_CONFIG.chatId) {
+            const programText = form.querySelector(`#program option[value="${data.program}"]`)?.textContent || data.program;
+            const textMessage = `🔔 <b>Yangi murojaat!</b>\n\n` +
+                                `👤 <b>Ism:</b> ${escapeHTML(data.name)}\n` +
+                                `📞 <b>Telefon:</b> ${escapeHTML(data.phone)}\n` +
+                                `🎓 <b>Yo'nalish:</b> ${escapeHTML(programText)}\n` +
+                                `✉️ <b>Xabar:</b> ${escapeHTML(data.message) || "Yo'q"}`;
+
+            fetch(`https://api.telegram.org/bot${TELEGRAM_CONFIG.botToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CONFIG.chatId,
+                    text: textMessage,
+                    parse_mode: 'HTML'
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    showNotification(getFormMessage('success'), 'success');
+                    form.reset();
+                } else {
+                    console.error('Telegram error:', response);
+                    showNotification(getFormMessage('error'), 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Fetch error:', err);
+                showNotification(getFormMessage('error'), 'error');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            });
+        } else {
+            // Simulate form submission (original fallback behavior)
+            setTimeout(() => {
+                showNotification(getFormMessage('success'), 'success');
+                form.reset();
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }, 1500);
+        }
     });
 }
 
@@ -284,6 +357,47 @@ function getFormMessage(key) {
 }
 
 // ===========================
+// Stat Number Animation
+// ===========================
+function initStatAnimation() {
+    const statNumbers = document.querySelectorAll('.stat-number[data-target]');
+
+    const animateNumber = (element, target, suffix) => {
+        const duration = 2000; // 2 seconds
+        const start = 0;
+        const increment = target / (duration / 16); // 60fps
+        let current = start;
+
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current) + suffix;
+        }, 16);
+    };
+
+    statNumbers.forEach(stat => {
+        const target = parseInt(stat.dataset.target);
+        const suffix = stat.textContent.includes('%') ? '%' : '+';
+        stat.textContent = '0' + suffix;
+
+        // Start animation when the stats section is visible
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateNumber(stat, target, suffix);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        observer.observe(stat);
+    });
+}
+
+// ===========================
 // Utility Functions
 // ===========================
 
@@ -310,4 +424,14 @@ function throttle(func, limit) {
             setTimeout(() => inThrottle = false, limit);
         }
     };
+}
+
+// HTML escaping helper for Telegram messages
+function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#039;');
 }

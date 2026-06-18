@@ -21,6 +21,10 @@
     --gray-800: #1e293b;
     --gray-900: #0f172a;
 
+    --header-bg: rgba(255, 255, 255, 0.95);
+    --bg-main: #ffffff;
+    --bg-card: #ffffff;
+
     /* Typography */
     --font-family:
         "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -52,6 +56,28 @@
     --radius-full: 9999px;
 }
 
+body.dark-theme {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --gray-50: #0b0f19;
+    --gray-100: #1e293b;
+    --gray-200: #334155;
+    --gray-300: #475569;
+    --gray-400: #64748b;
+    --gray-500: #94a3b8;
+    --gray-600: #cbd5e1;
+    --gray-700: #cbd5e1;
+    --gray-800: #f1f5f9;
+    --gray-900: #ffffff;
+    --secondary: #f8fafc;
+    --header-bg: rgba(15, 23, 42, 0.95);
+}
+
+/* Theme transition */
+body, .header, section, .about-card, .program-card, .advantage-item, .contact-card, .contact-form-wrapper, input, select, textarea, .footer, .lang-switcher, .lang-btn {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
 /* Reset */
 *,
 *::before,
@@ -70,7 +96,7 @@ body {
     font-size: 16px;
     line-height: 1.6;
     color: var(--gray-700);
-    background-color: var(--white);
+    background-color: var(--bg-main);
     overflow-x: hidden;
 }
 
@@ -168,7 +194,7 @@ h4 {
 }
 
 .btn-secondary {
-    background: var(--white);
+    background: var(--bg-card);
     color: var(--primary);
     border: 2px solid var(--primary);
 }
@@ -212,7 +238,7 @@ h4 {
     left: 0;
     right: 0;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--header-bg);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--gray-200);
     transition: var(--transition);
@@ -320,9 +346,39 @@ h4 {
 }
 
 .lang-btn.active {
-    background: var(--white);
+    background: var(--bg-card);
     color: var(--primary);
     box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    background: var(--gray-100);
+    color: var(--gray-600);
+    transition: var(--transition);
+}
+
+.theme-toggle-btn:hover {
+    background: var(--gray-200);
+    color: var(--primary);
+}
+
+.theme-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+body:not(.dark-theme) .theme-toggle-btn .sun-icon {
+    display: none;
+}
+
+body.dark-theme .theme-toggle-btn .moon-icon {
+    display: none;
 }
 
 .mobile-menu-btn {
@@ -478,7 +534,7 @@ section {
 }
 
 .about-card {
-    background: var(--white);
+    background: var(--bg-card);
     padding: 32px;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
@@ -527,7 +583,7 @@ section {
 
 .program-card {
     position: relative;
-    background: var(--white);
+    background: var(--bg-card);
     padding: 32px;
     border-radius: var(--radius-lg);
     border: 1px solid var(--gray-200);
@@ -698,7 +754,7 @@ section {
 }
 
 .contact-card:hover {
-    background: var(--white);
+    background: var(--bg-card);
     box-shadow: var(--shadow-md);
 }
 
@@ -738,7 +794,7 @@ section {
 
 /* Contact Form */
 .contact-form-wrapper {
-    background: var(--white);
+    background: var(--bg-card);
     padding: 40px;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
@@ -768,7 +824,7 @@ section {
     border: 1px solid var(--gray-300);
     border-radius: var(--radius);
     transition: var(--transition);
-    background: var(--white);
+    background: var(--bg-card);
 }
 
 .form-group input:focus,
@@ -905,7 +961,7 @@ section {
         left: 0;
         width: 100%;
         height: calc(100vh - 80px);
-        background-color: #ffffff;
+        background-color: var(--bg-main);
         z-index: 999;
         flex-direction: column;
         padding: 40px 20px;
