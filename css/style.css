@@ -381,6 +381,10 @@ body.dark-theme .theme-toggle-btn .moon-icon {
     display: none;
 }
 
+.mobile-only {
+    display: none !important;
+}
+
 .mobile-menu-btn {
     display: none;
     flex-direction: column;
@@ -953,6 +957,27 @@ section {
 @media (max-width: 768px) {
     :root {
         --section-padding: 60px 0;
+    }
+
+    .desktop-only {
+        display: none !important;
+    }
+
+    .mobile-only {
+        display: block !important;
+    }
+
+    .lang-switcher-mobile-li {
+        margin-top: 30px;
+        display: flex !important;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .lang-switcher-mobile-li .lang-switcher {
+        width: 100%;
+        max-width: 200px;
+        justify-content: center;
     }
 
     /* Navigation */
